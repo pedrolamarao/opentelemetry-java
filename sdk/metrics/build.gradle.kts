@@ -16,6 +16,8 @@ dependencies {
   api(project(":api:all"))
   api(project(":sdk:common"))
 
+  implementation("com.tdunning:t-digest:3.3")
+
   compileOnly("org.codehaus.mojo:animal-sniffer-annotations")
 
   annotationProcessor("com.google.auto.value:auto-value")
