@@ -8,7 +8,7 @@ package io.opentelemetry.exporter.internal.okhttp;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.MeterProvider;
 import io.opentelemetry.exporter.internal.ExporterBuilderUtil;
-import io.opentelemetry.exporter.internal.TlsUtil;
+import io.opentelemetry.exporter.internal.TlsConfigHelper;
 import io.opentelemetry.exporter.internal.auth.Authenticator;
 import io.opentelemetry.exporter.internal.marshal.Marshaler;
 import io.opentelemetry.exporter.internal.retry.RetryInterceptor;
@@ -18,8 +18,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.X509KeyManager;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -44,9 +43,8 @@ public final class OkHttpExporterBuilder<T extends Marshaler> {
   private boolean compressionEnabled = false;
   private boolean exportAsJson = false;
   @Nullable private Headers.Builder headersBuilder;
-  @Nullable private byte[] trustedCertificatesPem;
-  @Nullable private byte[] privateKeyPem;
-  @Nullable private byte[] certificatePem;
+
+  private final TlsConfigHelper tlsConfigHelper = new TlsConfigHelper();
   @Nullable private RetryPolicy retryPolicy;
   private Supplier<MeterProvider> meterProviderSupplier = GlobalOpenTelemetry::getMeterProvider;
   @Nullable private Authenticator authenticator;
@@ -91,14 +89,20 @@ public final class OkHttpExporterBuilder<T extends Marshaler> {
     return this;
   }
 
-  public OkHttpExporterBuilder<T> setTrustedCertificates(byte[] trustedCertificatesPem) {
-    this.trustedCertificatesPem = trustedCertificatesPem;
+  public OkHttpExporterBuilder<T> setTrustManagerFromCerts(byte[] trustedCertificatesPem) {
+    tlsConfigHelper.setTrustManagerFromCerts(trustedCertificatesPem);
     return this;
   }
 
-  public OkHttpExporterBuilder<T> setClientTls(byte[] privateKeyPem, byte[] certificatePem) {
-    this.privateKeyPem = privateKeyPem;
-    this.certificatePem = certificatePem;
+  public OkHttpExporterBuilder<T> setKeyManagerFromCerts(
+      byte[] privateKeyPem, byte[] certificatePem) {
+    tlsConfigHelper.setKeyManagerFromCerts(privateKeyPem, certificatePem);
+    return this;
+  }
+
+  public OkHttpExporterBuilder<T> setSslContext(
+      SSLContext sslContext, X509TrustManager trustManager) {
+    tlsConfigHelper.setSslContext(sslContext, trustManager);
     return this;
   }
 
@@ -123,20 +127,10 @@ public final class OkHttpExporterBuilder<T extends Marshaler> {
             .dispatcher(OkHttpUtil.newDispatcher())
             .callTimeout(Duration.ofNanos(timeoutNanos));
 
-    if (trustedCertificatesPem != null) {
-      try {
-        X509TrustManager trustManager = TlsUtil.trustManager(trustedCertificatesPem);
-        X509KeyManager keyManager = null;
-        if (privateKeyPem != null && certificatePem != null) {
-          keyManager = TlsUtil.keyManager(privateKeyPem, certificatePem);
-        }
-        clientBuilder.sslSocketFactory(
-            TlsUtil.sslSocketFactory(keyManager, trustManager), trustManager);
-      } catch (SSLException e) {
-        throw new IllegalStateException(
-            "Could not set trusted certificate for OTLP HTTP connection, are they valid X.509 in PEM format?",
-            e);
-      }
+    SSLContext sslContext = tlsConfigHelper.getSslContext();
+    X509TrustManager trustManager = tlsConfigHelper.getTrustManager();
+    if (sslContext != null && trustManager != null) {
+      clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
     }
 
     Headers headers = headersBuilder == null ? null : headersBuilder.build();

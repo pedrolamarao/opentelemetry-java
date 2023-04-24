@@ -2,6 +2,123 @@
 
 ## Unreleased
 
+## Version 1.25.0 (2023-04-07)
+
+### API
+
+* Cache ImmutableKeyValuePairs#hashCode
+  ([#5307](https://github.com/open-telemetry/opentelemetry-java/pull/5307))
+
+#### Propagators
+
+* Remove streams from B3Propagator
+  ([#5326](https://github.com/open-telemetry/opentelemetry-java/pull/5326))
+
+### SDK
+
+#### Metrics
+
+* Stop validating instrument unit
+  ([#5279](https://github.com/open-telemetry/opentelemetry-java/pull/5279))
+* Make the Executor for PrometheusHttpServer configurable
+  ([#5296](https://github.com/open-telemetry/opentelemetry-java/pull/5296))
+
+#### Exporter
+
+* Fix marshaler self suppression error
+  ([#5318](https://github.com/open-telemetry/opentelemetry-java/pull/5318))
+* Add sdk dependency to Logging OTLP exporter
+  ([#5291](https://github.com/open-telemetry/opentelemetry-java/pull/5291))
+
+#### Testing
+
+* Fixing up javadoc to reflect how to create a junit4 OpenTelemetryRule
+  ([#5299](https://github.com/open-telemetry/opentelemetry-java/pull/5299))
+
+### SDK Extensions
+
+* BREAKING: Autoconfigure drops support
+  for `otel.exporter.otlp.metrics.default.histogram.aggregation=EXPONENTIAL_BUCKET_HISTOGRAM`.
+  Use `BASE2_EXPONENTIAL_BUCKET_HISTOGRAM` instead.
+  ([#5290](https://github.com/open-telemetry/opentelemetry-java/pull/5290))
+* JaegerRemoteSampler use upstream grpc implementation if ManagedChannel is set
+  ([#5287](https://github.com/open-telemetry/opentelemetry-java/pull/5287))
+
+### OpenTracing Shim
+
+* Adds version to otel tracer instrumentation scope
+  ([#5336](https://github.com/open-telemetry/opentelemetry-java/pull/5336))
+
+## OpenCensus Shim
+
+* Adds version to otel tracer instrumentation scope
+  ([#5336](https://github.com/open-telemetry/opentelemetry-java/pull/5336))
+
+### Semantic Conventions
+
+* Update semconv to 1.19.0 and related build tool changes
+  ([#5311](https://github.com/open-telemetry/opentelemetry-java/pull/5311))
+
+## Version 1.24.0 (2023-03-10)
+
+### SDK
+
+#### Metrics
+
+* Optimize DefaultSynchronousMetricStorage iteration to reduce allocations
+  ([#5183](https://github.com/open-telemetry/opentelemetry-java/pull/5183))
+* Avoid exemplar allocations if there are no measurements
+  ([#5182](https://github.com/open-telemetry/opentelemetry-java/pull/5182))
+* Remove boxed primitives from aggregations to reduce allocations
+  ([#5184](https://github.com/open-telemetry/opentelemetry-java/pull/5184))
+* Stop ignoring long measurements in HistogramExemplarReservoir
+  ([#5216](https://github.com/open-telemetry/opentelemetry-java/pull/5216))
+* Remove validations for noop instrument names and units
+  ([#5146](https://github.com/open-telemetry/opentelemetry-java/pull/5146))
+* Allow views to select on instrument unit
+  ([#5255](https://github.com/open-telemetry/opentelemetry-java/pull/5255))
+
+#### Exporter
+
+* Add (internal) TlsConfigHelper for additional TLS configurability
+  ([#5246](https://github.com/open-telemetry/opentelemetry-java/pull/5246))
+
+#### SDK Extensions
+
+* Introduce mTLS support for JaegerRemoteSamplerBuilder (#5209)
+  ([#5248](https://github.com/open-telemetry/opentelemetry-java/pull/5248))
+
+### OpenTracing Shim
+
+* OpenTracing Shim: Update Tracer.close()
+  ([#5151](https://github.com/open-telemetry/opentelemetry-java/pull/5151))
+
+* Update version to 1.24.0
+  ([#5198](https://github.com/open-telemetry/opentelemetry-java/pull/5198))
+* Post release 1.23.0
+  ([#5202](https://github.com/open-telemetry/opentelemetry-java/pull/5202))
+
+### OpenCensus Shim
+
+* Addresses opencensus-shim trace issues under otel javaagent
+  ([#4900](https://github.com/open-telemetry/opentelemetry-java/pull/4900))
+
+### Project tooling
+
+* Cleanup readmes
+  ([#5263](https://github.com/open-telemetry/opentelemetry-java/pull/5263))
+* Upgrade to gradle 8.0.1
+  ([#5256](https://github.com/open-telemetry/opentelemetry-java/pull/5256))
+* Fixed example resource provider classname.
+  ([#5235](https://github.com/open-telemetry/opentelemetry-java/pull/5235))
+* Fix case of bug label in open issue workflow
+  ([#5268](https://github.com/open-telemetry/opentelemetry-java/pull/5268))
+
+### Semantic Conventions
+
+* Update semconv to 1.19.0
+  ([#5311](https://github.com/open-telemetry/opentelemetry-java/pull/5311))
+
 ## Version 1.23.1 (2023-02-15)
 
 * Fix bug that broke `AutoConfiguredOpenTelemetrySdk`'s shutdown hook.

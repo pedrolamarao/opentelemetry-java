@@ -12,6 +12,8 @@ dependencies {
   implementation(project(":exporters:otlp:logs"))
   implementation(project(":semconv"))
 
+  compileOnly("com.google.errorprone:error_prone_annotations")
+
   implementation("com.linecorp.armeria:armeria-grpc-protocol")
   implementation("com.linecorp.armeria:armeria-junit5")
   implementation("io.opentelemetry.proto:opentelemetry-proto")
@@ -40,4 +42,9 @@ tasks {
   check {
     dependsOn(testing.suites)
   }
+}
+
+// Skip OWASP dependencyCheck task on test module
+dependencyCheck {
+  skip = true
 }

@@ -28,8 +28,11 @@ public interface LogRecordData {
   /** Returns the instrumentation scope that generated this log. */
   InstrumentationScopeInfo getInstrumentationScopeInfo();
 
-  /** Returns the epoch timestamp in nanos when the log was recorded. */
-  long getEpochNanos();
+  /** Returns the timestamp at which the log record occurred, in epoch nanos. */
+  long getTimestampEpochNanos();
+
+  /** Returns the timestamp at which the log record was observed, in epoch nanos. */
+  long getObservedTimestampEpochNanos();
 
   /** Return the span context for this log, or {@link SpanContext#getInvalid()} if unset. */
   SpanContext getSpanContext();

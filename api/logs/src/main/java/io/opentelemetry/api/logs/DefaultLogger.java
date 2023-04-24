@@ -31,12 +31,22 @@ class DefaultLogger implements Logger {
     private NoopLogRecordBuilder() {}
 
     @Override
-    public LogRecordBuilder setEpoch(long timestamp, TimeUnit unit) {
+    public LogRecordBuilder setTimestamp(long timestamp, TimeUnit unit) {
       return this;
     }
 
     @Override
-    public LogRecordBuilder setEpoch(Instant instant) {
+    public LogRecordBuilder setTimestamp(Instant instant) {
+      return this;
+    }
+
+    @Override
+    public LogRecordBuilder setObservedTimestamp(long timestamp, TimeUnit unit) {
+      return this;
+    }
+
+    @Override
+    public LogRecordBuilder setObservedTimestamp(Instant instant) {
       return this;
     }
 
